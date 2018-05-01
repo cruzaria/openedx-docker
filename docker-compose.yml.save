@@ -1,0 +1,67 @@
+version: "3"
+services:
+
+  ############# External services
+
+  memcached:
+    image: memcached:1.4.38
+
+  # Simple SMTP server
+  smtp:
+    image: namshi/smtp
+    environment:
+      PORT: 9025
+
+  ############# LMS and CMS
+
+  lms:
+    build:
+      context: ./edxapp
+      args:
+        lms_host: edxpreview.cf
+        cms_host: studio.edxpreview.cf
+        service_variant: lms
+        secret_key: "Jahpai7shahx0Ecu0nag6uiph"
+    #restart: on-failure
+    volumes:
+      - ./data/edxapp:/openedx/data
+    depends_on:
+      - memcached
+      - mongodb
+      - mysql
+      - rabbitmq
+      - smtp
+
+  cms:
+    build:
+      context: ./edxapp
+      args:
+        lms_host: edxpreview.cf
+        cms_host: studio.edxpreview.cf
+        service_variant: cms
+        secret_key: "Jahpai7shahx0Ecu0nag6uiph"
+    #restart: on-failure
+    volumes:
+      - ./data/edxapp:/openedx/data
+    depends_on:
+      - lms
+
+  ############# LMS and CMS workers
+
+  # TODO one service per queue?
+  lms_worker:
+    build:
+      context: ./edxapp
+      args:
+        lms_host: edxpreview.cf
+        cms_host: studio.edxpreview.cf
+        service_variant: lms
+        secret_key: "Jahpai7shahx0Ecu0nag6uiph"
+    command: ./manage.py lms --settings=production celery worker --loglevel=info --hostname=edx.lms.core.default.%%h --maxtasksperchild 100
+    environment:
+      C_FORCE_ROOT: "1" # run celery tasks as root #nofear
+    #restart: on-failure
+    volumes:
+      - ./data/edxapp:/openedx/data
+    depends_on:
+      - lms

@@ -1,88 +1,95 @@
 version: "3"
+
 services:
 
   ############# External services
 
   memcached:
     image: memcached:1.4.38
-
-  mongodb:
-    # Use WiredTiger in all environments, just like at edx.org
-    command: mongod --smallfiles --nojournal --storageEngine wiredTiger
-    image: mongo:3.0.14
-    volumes:
-      - ./data/mongodb:/data/db
-
-  mysql:
-    image: mysql:5.6.36
-    command: mysqld --character-set-server=utf8 --collation-server=utf8_general_ci
-    environment:
-      MYSQL_ROOT_PASSWORD: ""
-      MYSQL_DATABASE: "openedx"
-      MYSQL_USER: "openedx"
-      MYSQL_PASSWORD: "password"
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-    volumes:
-      - ./data/mysql:/var/lib/mysql
-
-  nginx:
-    build:
-      context: ./nginx
-      args:
-          lms_host: edxpreview.cf
-          cms_host: studio.edxpreview.cf
-    #restart: on-failure
     ports:
-      - "8800:80"
-    volumes:
-      - ./data/edxapp:/openedx/data:ro
-    depends_on:
-      - lms
-
-  rabbitmq:
-    image: rabbitmq:3.6.10
-    volumes:
-      - ./data/rabbitmq:/var/lib/rabbitmq
-
-  # Simple SMTP server
-  smtp:
-    image: namshi/smtp
-    environment:
-      PORT: 9025
-
-  ############# LMS and CMS
+      - 11211:11211
 
   lms:
     build:
       context: ./edxapp
+      dockerfile: Dockerfile.lms
       args:
-        lms_host: edxpreview.cf
-        cms_host: studio.edxpreview.cf
+        lms_host: online.academy4cloud.com
+        cms_host: studio.academy4cloud.com
         service_variant: lms
         secret_key: "Jahpai7shahx0Ecu0nag6uiph"
     #restart: on-failure
     volumes:
       - ./data/edxapp:/openedx/data
+      - ./mongo_utils.py:/openedx/edx-platform/common/lib/xmodule/xmodule/mongo_utils.py
+      - ./common.py:/openedx/edx-platform/lms/envs/common.py
+      - ./production.py:/openedx/edx-platform/lms/envs/production.py
+      - ./views.py:/openedx/edx-platform/openedx/core/djangoapps/user_api/views.py
+#    entrypoint: /bin/bash
+#    command: -c "sleep 86400"
+#    ports:
+#      - 8000:8000
+    environment:
+      - SERVICE_8000_NAME=lms
+      - SERVICE_8000_CHECK_TCP=true
     depends_on:
       - memcached
-      - mongodb
-      - mysql
-      - rabbitmq
-      - smtp
+    dns:
+      - 10.0.0.4
 
   cms:
     build:
       context: ./edxapp
+      dockerfile: Dockerfile.cms
       args:
-        lms_host: edxpreview.cf
-        cms_host: studio.edxpreview.cf
+        lms_host: online.academy4cloud.com
+        cms_host: studio.academy4cloud.com
         service_variant: cms
         secret_key: "Jahpai7shahx0Ecu0nag6uiph"
     #restart: on-failure
+    environment:
+      - SERVICE_8000_NAME=cms
+      - SERVICE_8000_CHECK_TCP=true
     volumes:
       - ./data/edxapp:/openedx/data
+      - ./mongo_utils.py:/openedx/edx-platform/common/lib/xmodule/xmodule/mongo_utils.py
+      - ./common.py:/openedx/edx-platform/lms/envs/common.py
+      - ./production.py:/openedx/edx-platform/lms/envs/production.py
+      - ./views.py:/openedx/edx-platform/openedx/core/djangoapps/user_api/views.py
+#    entrypoint: /bin/bash
+#    command: -c "sleep 86400"
     depends_on:
       - lms
+    dns:
+      - 10.0.0.4
+
+  nginx:
+    build:
+      context: ./nginx
+      args:
+          lms_host: online.academy4cloud.com
+          cms_host: studio.academy4cloud.com
+    restart: on-failure
+    ports:
+      - "80:80"
+    environment:
+      - SERVICE_80_TAGS=urlprefix-online.academy4cloud.com/,urlprefix-www.online.academy4cloud.com/,urlprefix-studio.academy4cloud.com/,urlprefix-www.studio.academy4cloud.com/
+      - SERVICE_80_CHECK_TCP=true
+    volumes:
+      - ./data/edxapp:/openedx/data:ro
+      - ./landing.conf:/etc/nginx/conf.d/landing.conf
+    depends_on:
+      - lms
+
+  staticnginx:
+     image: nginx
+     ports:
+       - "12080:80"
+     volumes:
+       - "./data/edxapp/staticfiles/landing:/usr/share/nginx/html"
+     environment:
+       - SERVICE_80_TAGS=urlprefix-academy4cloud.com/,urlprefix-www.academy4cloud.com/
+       - SERVICE_80_CHECK_TCP=true
 
   ############# LMS and CMS workers
 
@@ -90,9 +97,10 @@ services:
   lms_worker:
     build:
       context: ./edxapp
+      dockerfile: Dockerfile
       args:
-        lms_host: edxpreview.cf
-        cms_host: studio.edxpreview.cf
+        lms_host: online.academy4cloud.com
+        cms_host: studio.academy4cloud.com
         service_variant: lms
         secret_key: "Jahpai7shahx0Ecu0nag6uiph"
     command: ./manage.py lms --settings=production celery worker --loglevel=info --hostname=edx.lms.core.default.%%h --maxtasksperchild 100
@@ -101,5 +109,12 @@ services:
     #restart: on-failure
     volumes:
       - ./data/edxapp:/openedx/data
+      - ./common.py:/openedx/edx-platform/lms/envs/common.py
+      - ./production.py:/openedx/edx-platform/lms/envs/production.py
+#    entrypoint: /bin/bash
+#    command: -c "sleep 86400"
     depends_on:
       - lms
+    dns:
+      - 10.0.0.4
+
