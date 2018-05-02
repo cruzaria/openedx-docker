@@ -1,17 +1,15 @@
 # [WIP] Dockerizing Cruzaria and build virtual private network
 
-How this looking in all production network:
+How this looking in virtual network:
 
 ![Schema](oie_1NUVmqAXcQqW.png)
-All other components please search on ![Cruzaria](https://github.com/cruzaria/)
 
-Now lets start with openEdX installation
+## In this tutorial only docker-compose
 
-Use docker-compose for production.
-
-The production stack is sufficient for a minimal production deployment of Open edX.
+All other components please search on [Cruzaria](https://github.com/cruzaria/)
 
 ## Lauch a production stack
+The production stack is sufficient for a minimal production deployment of Open edX.
 
 Prepare build:
 
