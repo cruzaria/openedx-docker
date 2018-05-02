@@ -1,6 +1,6 @@
 # [WIP] Dockerizing Cruzaria and build virtual private network
 
-How this looking in virtual network:
+How does this look on schema:
 
 ![Schema](oie_1NUVmqAXcQqW.png)
 
