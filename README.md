@@ -1,4 +1,4 @@
-# [WIP] Docker-compose Open edX production stack
+# [WIP] Dokerizing Cruzaria with docker-compose Open edX production stack
 
 This is a work-in-progress.
 
@@ -15,9 +15,9 @@ Build and run:
     docker-compose build # go get a coffee
     docker-compose up
 
-The LMS will be reachable at [http://openedxdemo.overhang.io](http://openedxdemo.overhang.io).
+The LMS will be reachable at http://localhost:8000.
 
-The CMS will be reachable at [http://studio.openedxdemo.overhang.io](http://studio.openedxdemo.overhang.io).
+The CMS will be reachable at http://localhost:8080.
 
 For local development, you should point to http://localhost:8800.
 
@@ -26,7 +26,7 @@ On the first run you will need to migrate the database and collect static assets
     make migrate
     make assets
 
-To import the Open edX demo course, run:
+To import the Open edX demo course, cloning from https://github.com/cruzaria/courses to upload dir and run:
 
     make import-demo-course
 
