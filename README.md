@@ -4,9 +4,9 @@ How this looking in virtual network:
 
 ![Schema](oie_1NUVmqAXcQqW.png)
 
-## In this tutorial only docker-compose
+## In this tutorial we build only app1 (app2)(app3)
 
-All other components please search on [Cruzaria](https://github.com/cruzaria/)
+Installation for all other components please search on [Cruzaria](https://github.com/cruzaria/)
 
 ## Lauch a production stack
 The production stack is sufficient for a minimal production deployment of Open edX.
