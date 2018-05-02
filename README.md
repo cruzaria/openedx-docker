@@ -1,6 +1,11 @@
-# [WIP] Dokerizing Cruzaria with docker-compose Open edX production stack
+# [WIP] Dockerizing Cruzaria and build virtual private network
 
-This is a work-in-progress.
+What do we have in finale:
+
+![Schema](oie_1NUVmqAXcQqW.png)
+Format: ![There picture for schema](url)
+
+Use docker-compose for production.
 
 The production stack is sufficient for a minimal production deployment of Open edX.
 
