@@ -1,9 +1,11 @@
 # [WIP] Dockerizing Cruzaria and build virtual private network
 
-What do we have in finale:
+How this looking in all production network:
 
 ![Schema](oie_1NUVmqAXcQqW.png)
-Format: ![There picture for schema](url)
+All other components please search on ![Cruzaria](https://github.com/cruzaria/)
+
+Now lets start with openEdX installation
 
 Use docker-compose for production.
 
