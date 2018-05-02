@@ -64,6 +64,16 @@ end enroll
 
     docker rm -f mongo && docker run --name mongo -e SERVICE_27017_NAME=mongo -e SERVICE_27017_TAGS=3 -e SERVICE_27017_CHECK_TCP=true -v /mongofiles/data:/data/db -v /mongokey:/opt/keyfile --hostname="mongo3" --add-host mongo1:10.0.0.7 --add-host mongo2:10.0.0.12 --add-host mongo3:10.0.0.13 -p 27017:27017 -d mongo --smallfiles --keyFile /opt/keyfile/mongodb-keyfile --replSet "rs0"
 
+
+## Last Step4 - smtp
+
+we use docker smtp from namshi (he like renamed here but you can find it)
+
+configure relay with this params  
+
+  "EMAIL_HOST": "smtp",
+  "EMAIL_PORT": 9025,
+
 ## Need help?
 
 [email](mailto:vvvvvvvvvv@inbox.ru)
