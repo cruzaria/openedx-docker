@@ -1,5 +1,7 @@
 # [WIP] Dockerizing Cruzaria and build virtual private network
 
+## Preambule - create 9 virtual machines that have installed [docker-compose](https://docs.docker.com/compose/) app1,(app2),...,(app9) 
+
 How does this look on schema:
 
 ![Schema](oie_1NUVmqAXcQqW.png)
