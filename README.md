@@ -1,4 +1,4 @@
-# [WIP] Dockerizing Cruzaria and build virtual private network
+# [WIP] Dockerizing edX and build virtual private network
 
 ## Preambule - create 9 virtual machines that have installed [docker-compose](https://docs.docker.com/compose/) app1,(app2),...,(app9) 
 
@@ -76,7 +76,10 @@ configure relay with this params
   "EMAIL_HOST": "smtp",
   "EMAIL_PORT": 9025,
 
-## Need help?
+## Need Russian hosting for edX?
 
+[hosting edX 100$/m](http://code.eletsjob.ru)
+
+for sellers:
 [email](mailto:vvvvvvvvvv@inbox.ru)
 [fb](https://www.facebook.com/andropovvv)
